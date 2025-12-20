@@ -98,4 +98,35 @@
     }
     container.innerHTML = html;
   }
+  function exportToCSV() {
+    if (!expenses.length) { alert("No expenses to export."); return; }
+    var rows = [["Name","Amount","Category","Date","Created"]];
+    for (var i = 0; i < expenses.length; i++) {
+      var e = expenses[i];
+      rows.push([e.name, e.amount, e.category, e.date, e.createdAt]);
+    }
+    var csv = rows.map(function (r) { return r.join(","); }).join("\n");
+    var blob = new Blob([csv], { type: "text/csv" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = "expenses.csv";
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+  }
+
+  function toggleTheme() {
+    var body = document.body;
+    body.classList.toggle("dark-theme");
+    var isDark = body.classList.contains("dark-theme");
+    localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    $("#themeToggle").textContent = isDark ? "☀️" : "Moon";
+  }
+
+  function loadTheme() {
+    var saved = localStorage.getItem(THEME_KEY);
+    if (saved === "dark") {
+      document.body.classList.add("dark-theme");
+      $("#themeToggle").textContent = "☀️";
+    }
+  }
 })();
