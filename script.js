@@ -55,4 +55,47 @@
   }
 
   function getCategoryIcon(category) { return CATEGORY_ICONS[category] || CATEGORY_ICONS.Other; }
+  function deleteExpense(id) {
+    if (!confirm("Delete this expense?")) return;
+    expenses = expenses.filter(function (exp) { return exp.id !== id; });
+    saveExpenses(); renderExpenses(); updateTotal();
+  }
+
+  function getFilteredExpenses() {
+    var filtered = expenses;
+    if (currentFilter !== "all") filtered = filtered.filter(function (exp) { return exp.category === currentFilter; });
+    if (searchQuery) {
+      var q = searchQuery.toLowerCase();
+      filtered = filtered.filter(function (exp) { return exp.name.toLowerCase().includes(q); });
+    }
+    return filtered;
+  }
+
+  function renderExpenses() {
+    var container = $("#expensesContainer");
+    var list = getFilteredExpenses();
+    if (!list.length) {
+      container.innerHTML = "<p class=\"empty-state\">No expenses yet. Add your first expense above!</p>";
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < list.length; i++) {
+      var exp = list[i];
+      html += "<div class=\"expense-card\" data-id=\"" + exp.id + "\">" +
+        "<div class=\"expense-info\">" +
+          "<span class=\"expense-name\">" + exp.name + "</span>" +
+          "<div class=\"expense-meta\">" +
+            "<span class=\"expense-category\"><span class=\"category-icon\">" + getCategoryIcon(exp.category) + "</span> " + exp.category + "</span>" +
+            "<span class=\"expense-date\">" + formatDate(exp.date) + "</span>" +
+          "</div>" +
+        "</div>" +
+        "<div class=\"expense-actions\">" +
+          "<span class=\"expense-amount\">" + formatCurrency(exp.amount) + "</span>" +
+          "<button class=\"btn btn-sm btn-edit\" data-action=\"edit\">Edit</button>" +
+          "<button class=\"btn btn-sm btn-danger\" data-action=\"delete\">Delete</button>" +
+        "</div>" +
+      "</div>";
+    }
+    container.innerHTML = html;
+  }
 })();
