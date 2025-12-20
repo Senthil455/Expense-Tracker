@@ -129,4 +129,32 @@
       $("#themeToggle").textContent = "☀️";
     }
   }
+  function openEditModal(id) {
+    var exp = expenses.find(function (e) { return e.id === id; });
+    if (!exp) return;
+    editId = id;
+    $("#editId").value = id; $("#editName").value = exp.name;
+    $("#editAmount").value = exp.amount; $("#editCategory").value = exp.category;
+    $("#editDate").value = exp.date;
+    $("#editModal").classList.add("open");
+  }
+
+  function closeEditModal() { editId = null; $("#editModal").classList.remove("open"); }
+
+  function handleEditSubmit(e) {
+    e.preventDefault();
+    var id = $("#editId").value, name = $("#editName").value.trim();
+    var amount = $("#editAmount").value, category = $("#editCategory").value, date = $("#editDate").value;
+    var err = validateAmount(amount);
+    if (!name) { alert("Please enter an expense name."); return; }
+    if (err) { alert(err); return; }
+    for (var i = 0; i < expenses.length; i++) {
+      if (expenses[i].id === id) {
+        expenses[i].name = name; expenses[i].amount = parseFloat(amount);
+        expenses[i].category = category; expenses[i].date = date;
+        break;
+      }
+    }
+    saveExpenses(); closeEditModal(); renderExpenses(); updateTotal();
+  }
 })();
