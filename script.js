@@ -17,6 +17,7 @@
   var searchTimeout = null;
   function formatCurrency(amount) { return "$" + amount.toFixed(2); }
 
+  // negative values blocked
   function validateAmount(amount) {
     var val = parseFloat(amount);
     if (isNaN(val) || val <= 0) return "Please enter a valid positive amount.";
