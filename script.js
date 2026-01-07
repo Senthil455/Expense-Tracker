@@ -157,4 +157,61 @@
     }
     saveExpenses(); closeEditModal(); renderExpenses(); updateTotal();
   }
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    if (addExpense($("#name").value, $("#amount").value, $("#category").value, $("#date").value)) {
+      $("#expenseForm").reset();
+      $("#date").value = new Date().toISOString().split("T")[0];
+      renderExpenses(); updateTotal();
+    }
+  }
+
+  function handleContainerClick(e) {
+    var target = e.target.closest("[data-action]");
+    if (!target) return;
+    var card = target.closest(".expense-card");
+    var id = card ? card.dataset.id : null;
+    if (!id) return;
+    if (target.dataset.action === "delete") deleteExpense(id);
+    else if (target.dataset.action === "edit") openEditModal(id);
+  }
+
+  function handleFilterChange(e) { currentFilter = e.target.value; renderExpenses(); updateTotal(); }
+
+  function debouncedSearch(e) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      searchQuery = e.target.value;
+      renderExpenses(); updateTotal();
+    }, 250);
+  }
+
+  function updateTotal() {
+    var filtered = getFilteredExpenses();
+    var total = 0;
+    for (var i = 0; i < filtered.length; i++) total += filtered[i].amount;
+    var el = $("#totalExpenses");
+    var countEl = $("#expenseCount");
+    if (el) el.textContent = "Total: " + formatCurrency(total);
+    if (countEl) countEl.textContent = "(" + filtered.length + " items)";
+  }
+
+  function init() {
+    loadExpenses(); loadTheme();
+    renderExpenses(); updateTotal();
+    $("#date").value = new Date().toISOString().split("T")[0];
+    $("#expenseForm").addEventListener("submit", handleFormSubmit);
+    $("#expensesContainer").addEventListener("click", handleContainerClick);
+    $("#filterCategory").addEventListener("change", handleFilterChange);
+    $("#search").addEventListener("input", debouncedSearch);
+    $("#editForm").addEventListener("submit", handleEditSubmit);
+    $("#cancelEdit").addEventListener("click", closeEditModal);
+    var closeBtn = $("#editModal .modal-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeEditModal);
+    $("#editModal").addEventListener("click", function (e) { if (e.target === this) closeEditModal(); });
+    $("#themeToggle").addEventListener("click", toggleTheme);
+    $("#exportBtn").addEventListener("click", exportToCSV);
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
 })();
