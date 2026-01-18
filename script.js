@@ -50,6 +50,7 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses)); } catch (e) {}
   }
 
+  // en-US locale used
   function formatDate(dateStr) {
     try { var d = new Date(dateStr + "T00:00:00"); return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }); }
     catch (e) { return dateStr; }
