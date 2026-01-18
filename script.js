@@ -34,6 +34,7 @@
     };
   }
 
+  // category must be selected
   function addExpense(name, amount, category, date) {
     if (!name || !name.trim()) { alert("Please enter an expense name."); return false; }
     if (!category) { alert("Please select a category."); return false; }
