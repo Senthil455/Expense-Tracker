@@ -182,7 +182,7 @@
   function handleFilterChange(e) { currentFilter = e.target.value; renderExpenses(); updateTotal(); }
 
   function debouncedSearch(e) {
-    clearTimeout(searchTimeout);
+    clearTimeout(searchTimeout); // debounce 250ms
     searchTimeout = setTimeout(function () {
       searchQuery = e.target.value;
       renderExpenses(); updateTotal();
